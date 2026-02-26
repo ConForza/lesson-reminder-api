@@ -3,17 +3,17 @@ from app.schemas.invoice import LessonPreview, InvoicePreviewRequest, InvoicePre
 
 class InvoicePreviewService:
 
-    def preview_invoice(self, body: InvoicePreviewRequest):
+    def preview_invoice(self, body: InvoicePreviewRequest) -> InvoicePreviewResponse:
         lessons: List[LessonPreview] = [
             LessonPreview(
-                name="Test Student ",
+                name="Test Student 1",
                 duration=30,
                 lesson_cut=10.0,
                 paid=True,
             ),
 
             LessonPreview(
-                name = "Test Student 12",
+                name = "Test Student 2",
                 duration = 60,
                 lesson_cut = 15.0,
                 paid = False,
