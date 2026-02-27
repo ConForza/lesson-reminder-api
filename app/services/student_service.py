@@ -1,5 +1,7 @@
 from app.core.exceptions import DomainError
 from app.schemas.remaining_lessons import RemainingLessonsResponse, RemainingLessonsRequest, Lesson
+from app.schemas.student import StudentRequest, StudentResponse
+
 
 class StudentService:
 
@@ -32,3 +34,17 @@ class StudentService:
             lessons_30=len(lessons_30),
             lessons_60=len(lessons_60),
         )
+
+    def get_student(self, body: StudentRequest) -> StudentResponse:
+        if body.student_email.strip() == "":
+            raise DomainError("student_email must not be left blank")
+
+        if body.student_email == "joe@bloggs.com":
+            return StudentResponse(
+                student_email=body.student_email,
+                first_name="Joe",
+                surname="Bloggs",
+                instrument="piano",
+            )
+        else:
+            raise DomainError("Student not found", status_code=404)

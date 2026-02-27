@@ -27,7 +27,7 @@ class TestStudentService:
         )
 
         with pytest.raises(DomainError, match="student_email must not be left blank"):
-            response = self.student_service.get_remaining_lessons(request)
+            self.student_service.get_remaining_lessons(request)
 
 
     def test_incorrect_instrument(self):
@@ -37,4 +37,4 @@ class TestStudentService:
         )
 
         with pytest.raises(DomainError, match="Instrument is not supported"):
-            response = self.student_service.get_remaining_lessons(request)
+            self.student_service.get_remaining_lessons(request)
