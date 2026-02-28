@@ -12,7 +12,7 @@ def get_invoice_preview_service() -> InvoicePreviewService:
     response_model=InvoicePreviewResponse,
     summary="Preview invoice for staff member",
     description="Calculates invoice totals over a given period for a specific staff member (preview only). "
-                "Dates are expected in DD-MM-YY format."
+                "Dates are expected in YY-MM-DD format."
 )
 async def preview_invoice(
         body: InvoicePreviewRequest,

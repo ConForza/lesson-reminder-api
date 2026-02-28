@@ -5,6 +5,10 @@ from app.api.v1.health import health_router
 from app.api.v1.invoice import invoice_router
 from app.api.v1.students import students_router
 from app.core.exceptions import DomainError
+from app.core.config import get_settings, Settings
+from fastapi import Depends
+
+settings = get_settings()
 
 tags_metadata = [
     {"name": "system",
@@ -16,19 +20,23 @@ tags_metadata = [
 ]
 
 app = FastAPI(
-    title="Lesson Reminder API",
+    title=settings.app_name,
     description="Backend API for managing student lessons and invoice tracking for a music school",
-    version="0.1.0",
+    version=settings.version,
     openapi_tags=tags_metadata,
 )
-app.include_router(health_router, prefix="/api/v1")
-app.include_router(invoice_router, prefix="/api/v1")
-app.include_router(students_router, prefix="/api/v1")
+app.include_router(health_router, prefix=settings.api_v1_prefix)
+app.include_router(invoice_router, prefix=settings.api_v1_prefix)
+app.include_router(students_router, prefix=settings.api_v1_prefix)
 
 
 @app.get("/")
-async def root():
-    return {"message": "Hello World"}
+async def root(settings: Settings = Depends(get_settings)):
+    return {
+        "message": "Hello World",
+        "environment": settings.environment,
+        "version": settings.version,
+    }
 
 
 @app.exception_handler(DomainError)

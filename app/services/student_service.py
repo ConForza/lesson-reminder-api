@@ -1,9 +1,13 @@
 from app.core.exceptions import DomainError
+from app.repositories.lesson_repository import LessonRepository
 from app.schemas.remaining_lessons import RemainingLessonsResponse, RemainingLessonsRequest, Lesson
 from app.schemas.student import StudentRequest, StudentResponse
 
 
 class StudentService:
+
+    def __init__(self, lesson_repo: LessonRepository):
+        self.lesson_repo = lesson_repo
 
     def get_remaining_lessons(self, body: RemainingLessonsRequest) -> RemainingLessonsResponse:
         if body.student_email.strip() == "":
@@ -11,20 +15,7 @@ class StudentService:
         if body.instrument.lower().strip() != "piano":
             raise DomainError("Instrument is not supported")
 
-        lessons = [
-            Lesson(
-                student_email="joe@bloggs.com",
-                duration=30,
-            ),
-            Lesson(
-                student_email="joe@bloggs.com",
-                duration=60,
-            ),
-            Lesson(
-                student_email="joe@bloggs.com",
-                duration=30,
-            ),
-        ]
+        lessons = self.lesson_repo.get_lessons_for_student(body.student_email, body.instrument)
         lessons_30 = [l for l in lessons if l.duration == 30]
         lessons_60 = [l for l in lessons if l.duration == 60]
 

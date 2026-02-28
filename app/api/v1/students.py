@@ -1,4 +1,6 @@
 from fastapi import APIRouter, Depends
+
+from app.repositories.lesson_repository import InMemoryLessonRepository
 from app.schemas.student import StudentRequest, StudentResponse
 from app.services.student_service import StudentService
 from app.schemas.remaining_lessons import RemainingLessonsResponse, RemainingLessonsRequest
@@ -6,7 +8,8 @@ from app.schemas.remaining_lessons import RemainingLessonsResponse, RemainingLes
 students_router = APIRouter(tags=["students"])
 
 def get_student_service() -> StudentService:
-    return StudentService()
+    repo = InMemoryLessonRepository()
+    return StudentService(repo)
 
 
 @students_router.get(

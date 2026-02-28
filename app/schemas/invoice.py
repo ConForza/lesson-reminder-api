@@ -1,10 +1,11 @@
 from pydantic import BaseModel, Field
 from typing import List
+from datetime import date
 
 class InvoicePreviewRequest(BaseModel):
-    staff_id: int = Field(examples=[1])
-    date_from: str = Field(examples=["01-02-26"])
-    date_to: str = Field(examples=["02-03-26"])
+    staff_id: int = Field(gt=0, examples=[1])
+    date_from: date = Field(examples=["2026-02-28"])
+    date_to: date = Field(examples=["2026-03-29"])
     preview: bool = Field(default=True, examples=[True])
 
 class LessonPreview(BaseModel):
@@ -15,8 +16,8 @@ class LessonPreview(BaseModel):
 
 class InvoicePreviewResponse(BaseModel):
     staff_id: int
-    date_from: str
-    date_to: str
+    date_from: date
+    date_to: date
     preview: bool
     total_amount: float
     lessons: List[LessonPreview]

@@ -86,5 +86,6 @@ The application follows a layered architecture:
 	•	Services contain business logic.
 	•	Schemas define request and response models.
 	•	Domain errors are raised in the service layer and handled globally via a custom exception handler.
+	•	StudentService uses a pluggable LessonRepository (currently an in-memory implementation) to prepare student lesson summaries.
 
 This separation ensures that business logic remains independent of the HTTP layer and allows external integrations (such as scheduling providers) to be swapped without affecting core domain logic.

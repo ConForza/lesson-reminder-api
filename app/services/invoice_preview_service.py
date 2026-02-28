@@ -8,21 +8,12 @@ class InvoicePreviewService:
 
     def preview_invoice(self, body: InvoicePreviewRequest) -> InvoicePreviewResponse:
         try:
-            date_from = body.date_from.strip()
-            date_to = body.date_to.strip()
+            date_from = body.date_from
+            date_to = body.date_to
         except ValueError:
-            raise DomainError("Dates must be in the format DD-MM-YY")
+            raise DomainError("Dates must be in the format YYYY-MM-DD")
 
-        if body.staff_id < 1:
-            raise DomainError("staff_id must be an integer above zero")
-
-        if date_from == "":
-            raise DomainError("date_from must not be left blank")
-
-        if date_to == "":
-            raise DomainError("date_to must not be left blank")
-
-        if datetime.strptime(date_from, "%d-%m-%y") > datetime.strptime(date_to, "%d-%m-%y"):
+        if date_from > date_to:
             raise DomainError("date_to must not be before date_from")
 
 
@@ -46,8 +37,8 @@ class InvoicePreviewService:
 
         return InvoicePreviewResponse(
             staff_id=body.staff_id,
-            date_from=body.date_from,
-            date_to=body.date_to,
+            date_from=date_from,
+            date_to=date_to,
             preview=body.preview,
             total_amount=total,
             lessons=lessons,

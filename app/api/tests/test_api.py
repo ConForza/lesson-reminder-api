@@ -15,8 +15,8 @@ def test_invoice_preview():
     response = client.post("/api/v1/invoices/preview", json=
     {
         "staff_id": 1,
-        "date_from": "26-02-25",
-        "date_to": "26-02-26",
+        "date_from": "2025-02-26",
+        "date_to": "2026-02-26",
         "preview": True,
     }
                            )
@@ -34,8 +34,8 @@ def test_invalid_staff_id_in_invoice_preview():
     response = client.post("/api/v1/invoices/preview", json=
     {
         "staff_id": 0,
-        "date_from": "26-02-25",
-        "date_to": "26-02-26",
+        "date_from": "2025-02-26",
+        "date_to": "2026-02-26",
         "preview": True,
     }
 
@@ -43,8 +43,8 @@ def test_invalid_staff_id_in_invoice_preview():
 
     data = response.json()
 
-    assert response.status_code == 400
-    assert data == {"detail": "staff_id must be an integer above zero"}
+    assert response.status_code == 422
+    assert data["detail"][0]["msg"] == "Input should be greater than 0"
 
 
 def test_blank_date_from_in_invoice_preview():
@@ -52,22 +52,22 @@ def test_blank_date_from_in_invoice_preview():
     {
         "staff_id": 1,
         "date_from": "",
-        "date_to": "26-02-26",
+        "date_to": "2026-02-26",
         "preview": True,
     }
                            )
 
     data = response.json()
 
-    assert response.status_code == 400
-    assert data == {"detail": "date_from must not be left blank"}
+    assert response.status_code == 422
+    assert data["detail"][0]["msg"] == "Input should be a valid date or datetime, input is too short"
 
 
 def test_blank_date_to_in_invoice_preview():
     response = client.post("/api/v1/invoices/preview", json=
     {
         "staff_id": 1,
-        "date_from": "26-01-26",
+        "date_from": "2026-02-26",
         "date_to": "",
         "preview": True,
     }
@@ -75,16 +75,16 @@ def test_blank_date_to_in_invoice_preview():
 
     data = response.json()
 
-    assert response.status_code == 400
-    assert data == {"detail": "date_to must not be left blank"}
+    assert response.status_code == 422
+    assert data["detail"][0]["msg"] == "Input should be a valid date or datetime, input is too short"
 
 
 def test_date_from_greater_than_date_to():
     response = client.post("/api/v1/invoices/preview", json=
     {
         "staff_id": 1,
-        "date_from": "26-03-26",
-        "date_to": "26-02-26",
+        "date_from": "2026-02-26",
+        "date_to": "2026-02-25",
         "preview": True,
     }
                            )
