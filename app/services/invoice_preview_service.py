@@ -1,5 +1,4 @@
 from typing import List
-from datetime import datetime
 
 from app.core.exceptions import DomainError
 from app.schemas.invoice import LessonPreview, InvoicePreviewRequest, InvoicePreviewResponse
