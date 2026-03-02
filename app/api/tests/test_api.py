@@ -124,12 +124,14 @@ def test_students_remaining_lessons_invalid_instrument():
 
 
 def test_students_remaining_lessons():
-    response = client.post("/api/v1/students/remaining-lessons", json=
-    {
-        "student_email": "joe@bloggs.com",
-        "instrument": "piano",
-    }
-                           )
+    response = client.post(
+        "/api/v1/students/remaining-lessons",
+        json=
+        {
+            "student_email": "joe@bloggs.com",
+            "instrument": "piano",
+        }
+    )
 
     data = response.json()
 
@@ -195,3 +197,69 @@ def test_get_student_with_unknown_email():
 
     assert response.status_code == 404
     assert data == {"detail": "Student not found"}
+
+
+def test_create_student():
+    response = client.post(
+        "/api/v1/students",
+        json={
+            "student_email": "another@student.com",
+            "first_name": "Another",
+            "surname": "Student",
+            "instrument": "piano",
+        }
+    )
+
+    data = response.json()
+
+    assert response.status_code == 200
+    assert data["student_email"] == "another@student.com"
+    assert data["first_name"] == "Another"
+    assert data["surname"] == "Student"
+    assert data["instrument"] == "piano"
+
+def test_create_student_with_duplicate_email():
+    response = client.post(
+        "/api/v1/students",
+        json={
+            "student_email": "joe@bloggs.com",
+            "first_name": "Joe",
+            "surname": "Bloggs",
+            "instrument": "piano",
+        }
+    )
+
+    data = response.json()
+
+    assert response.status_code == 400
+    assert data["detail"] == "Student already exists"
+
+def test_create_student_and_fetch_all_students():
+    client.post(
+        "/api/v1/students",
+        json={
+            "student_email": "another@student.com",
+            "first_name": "Another",
+            "surname": "Student",
+            "instrument": "piano",
+        }
+    )
+
+    response = client.get("/api/v1/students")
+
+    data = response.json()
+
+    assert response.status_code == 200
+    assert data == [{
+            "student_email": "joe@bloggs.com",
+            "first_name": "Joe",
+            "surname": "Bloggs",
+            "instrument": "piano",
+        },
+        {
+            "student_email": "another@student.com",
+            "first_name": "Another",
+            "surname": "Student",
+            "instrument": "piano",
+        }
+    ]

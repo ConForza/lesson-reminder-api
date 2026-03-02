@@ -8,3 +8,15 @@ class StudentResponse(BaseModel):
     first_name: str
     surname: str
     instrument: str | None
+
+class Student(BaseModel):
+    student_email: str
+    first_name: str
+    surname: str
+    instrument: str | None
+
+class CreateStudentRequest(BaseModel):
+    student_email: str
+    first_name: str
+    surname: str
+    instrument: str

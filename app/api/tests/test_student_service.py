@@ -1,12 +1,13 @@
 import pytest
 from app.core.exceptions import DomainError
 from app.repositories.lesson_repository import InMemoryLessonRepository
+from app.repositories.student_repository import InMemoryStudentRepository
 from app.services.student_service import StudentService
 from app.schemas.remaining_lessons import RemainingLessonsRequest
 
 class TestStudentService:
 
-    student_service = StudentService(InMemoryLessonRepository())
+    student_service = StudentService(InMemoryLessonRepository(), InMemoryStudentRepository())
 
     def test_remaining_lessons_happy_path(self):
         request = RemainingLessonsRequest(

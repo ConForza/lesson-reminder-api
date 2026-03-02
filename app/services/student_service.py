@@ -1,13 +1,15 @@
 from app.core.exceptions import DomainError
 from app.repositories.lesson_repository import LessonRepository
+from app.repositories.student_repository import StudentRepository
 from app.schemas.remaining_lessons import RemainingLessonsResponse, RemainingLessonsRequest, Lesson
-from app.schemas.student import StudentRequest, StudentResponse
+from app.schemas.student import StudentRequest, StudentResponse, CreateStudentRequest
 
 
 class StudentService:
 
-    def __init__(self, lesson_repo: LessonRepository):
+    def __init__(self, lesson_repo: LessonRepository, student_repo: StudentRepository):
         self.lesson_repo = lesson_repo
+        self.student_repo = student_repo
 
     def get_remaining_lessons(self, body: RemainingLessonsRequest) -> RemainingLessonsResponse:
         if body.student_email.strip() == "":
@@ -26,16 +28,47 @@ class StudentService:
             lessons_60=len(lessons_60),
         )
 
-    def get_student(self, body: StudentRequest) -> StudentResponse:
+    def get_student(self, body: StudentRequest) -> StudentResponse | None:
         if body.student_email.strip() == "":
             raise DomainError("student_email must not be left blank")
 
-        if body.student_email == "joe@bloggs.com":
+        student = self.student_repo.get_student_by_email(body.student_email)
+
+        if student is not None:
             return StudentResponse(
-                student_email=body.student_email,
-                first_name="Joe",
-                surname="Bloggs",
-                instrument="piano",
+                student_email=student.student_email,
+                first_name=student.first_name,
+                surname=student.surname,
+                instrument=student.instrument,
             )
         else:
             raise DomainError("Student not found", status_code=404)
+
+    def create_student(self, body: CreateStudentRequest) -> StudentResponse:
+        if body.student_email.strip() == "":
+            raise DomainError("student_email must not be left blank")
+
+        if self.student_repo.get_student_by_email(body.student_email) is not None:
+            raise DomainError("Student already exists", status_code=400)
+        else:
+            student = StudentResponse(
+                student_email=body.student_email,
+                first_name=body.first_name,
+                surname=body.surname,
+                instrument=body.instrument,
+            )
+
+            self.student_repo.create_student(student)
+            return student
+
+    def list_students(self) -> list[StudentResponse] | None:
+        students = self.student_repo.list_students()
+        return [
+            StudentResponse(
+                student_email=student.student_email,
+                first_name=student.first_name,
+                surname=student.surname,
+                instrument=student.instrument,
+            )
+            for student in students
+        ]

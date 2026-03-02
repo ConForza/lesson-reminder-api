@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 
 from app.core.deps import get_student_service
-from app.schemas.student import StudentRequest, StudentResponse
+from app.schemas.student import StudentRequest, StudentResponse, CreateStudentRequest
 from app.services.student_service import StudentService
 from app.schemas.remaining_lessons import RemainingLessonsResponse, RemainingLessonsRequest
 
@@ -24,6 +24,27 @@ async def get_student_record(
             student_email=student_email,
         )
     )
+
+@students_router.get(
+    "/students",
+    response_model=list[StudentResponse],
+    summary="Get a list of all students",
+    description="Fetches a list of all student's records"
+)
+async def get_all_students(service: StudentService = Depends(get_student_service)) -> list[StudentResponse]:
+    return service.list_students()
+
+@students_router.post(
+    "/students",
+    response_model=StudentResponse,
+    summary="Create a new student record",
+    description="Creates and stores a new student record."
+)
+async def create_student(
+        body: CreateStudentRequest,
+        service: StudentService = Depends(get_student_service)
+) -> StudentResponse:
+    return service.create_student(body)
 
 @students_router.post(
     "/students/remaining-lessons",
