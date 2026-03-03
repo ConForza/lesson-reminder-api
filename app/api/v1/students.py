@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 
 from app.core.deps import get_student_service
-from app.schemas.student import StudentRequest, StudentResponse, CreateStudentRequest
+from app.schemas.student import StudentRequest, StudentResponse, CreateStudentRequest, UpdateStudentRequest
 from app.services.student_service import StudentService
 from app.schemas.remaining_lessons import RemainingLessonsResponse, RemainingLessonsRequest
 
@@ -75,3 +75,28 @@ async def get_remaining_lessons(student_email: str, instrument: str,
             instrument=instrument,
         )
     )
+
+@students_router.delete(
+    "/students/{student_email}",
+    summary="Delete a student record",
+    description="Deletes a student by email."
+)
+async def delete_student(
+    student_email: str,
+    service: StudentService = Depends(get_student_service)
+):
+    service.delete_student(StudentRequest(student_email=student_email))
+    return {"detail": "Student deleted successfully"}
+
+@students_router.put(
+    "/students/{student_email}",
+    response_model=StudentResponse,
+    summary="Update a student record",
+    description="Updates an existing student's first name, surname, and instrument."
+)
+async def update_student(
+        student_email: str,
+        body: UpdateStudentRequest,
+        service: StudentService = Depends(get_student_service),
+) -> StudentResponse:
+    return service.update_student(student_email, body)

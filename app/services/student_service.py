@@ -2,7 +2,7 @@ from app.core.exceptions import DomainError
 from app.repositories.lesson_repository import LessonRepository
 from app.repositories.student_repository import StudentRepository
 from app.schemas.remaining_lessons import RemainingLessonsResponse, RemainingLessonsRequest, Lesson
-from app.schemas.student import StudentRequest, StudentResponse, CreateStudentRequest
+from app.schemas.student import StudentRequest, StudentResponse, CreateStudentRequest, UpdateStudentRequest
 
 
 class StudentService:
@@ -72,3 +72,30 @@ class StudentService:
             )
             for student in students
         ]
+
+    def delete_student(self, body: StudentRequest) -> None:
+        if body.student_email.strip() == "":
+            raise DomainError("student_email must not be left blank")
+
+        if self.student_repo.get_student_by_email(body.student_email) is None:
+            raise DomainError("Student not found", status_code=404)
+
+        self.student_repo.delete_student(body.student_email)
+
+    def update_student(self, email: str, body: UpdateStudentRequest) -> StudentResponse:
+        if email.strip() == "":
+            raise DomainError("student_email must not be left blank")
+
+        existing = self.student_repo.get_student_by_email(email)
+        if existing is None:
+            raise DomainError("Student not found", status_code=404)
+
+        updated = StudentResponse(
+            student_email=email,
+            first_name=body.first_name,
+            surname=body.surname,
+            instrument=body.instrument,
+        )
+
+        self.student_repo.update_student(email, updated)
+        return updated

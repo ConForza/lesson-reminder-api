@@ -263,3 +263,76 @@ def test_create_student_and_fetch_all_students():
             "instrument": "piano",
         }
     ]
+
+def test_delete_student():
+    client.post(
+        "api/v1/students",
+        json={
+            "student_email": "delete@test.com",
+            "first_name": "Delete",
+            "surname": "Me",
+            "instrument": "piano",
+        }
+    )
+
+    response = client.delete("/api/v1/students/delete@test.com")
+    data = response.json()
+
+    assert response.status_code == 200
+    assert data == {"detail": "Student deleted successfully"}
+
+def test_delete_non_existent_student():
+    response = client.delete("/api/v1/students/unknown@test.com")
+
+    data = response.json()
+
+    assert response.status_code == 404
+    assert data == {"detail": "Student not found"}
+
+def test_update_student():
+    response = client.put(
+        "/api/v1/students/joe@bloggs.com",
+        json={
+            "first_name": "Joseph",
+            "surname": "Bloggs",
+            "instrument": "piano",
+        }
+    )
+
+    data = response.json()
+
+    assert response.status_code == 200
+    assert data["student_email"] == "joe@bloggs.com"
+    assert data["first_name"] == "Joseph"
+    assert data["surname"] == "Bloggs"
+    assert data["instrument"] == "piano"
+
+def test_update_student_blank_email():
+    response = client.put(
+        "/api/v1/students/%20",
+        json={
+            "first_name": "Whatever",
+            "surname": "Name",
+            "instrument": "piano",
+        }
+    )
+
+    data = response.json()
+
+    assert response.status_code == 400
+    assert data == {"detail": "student_email must not be left blank"}
+
+def test_update_non_existent_student():
+    response = client.put(
+        "/api/v1/students/doesnotexist@test.com",
+        json={
+            "first_name": "Ghost",
+            "surname": "User",
+            "instrument": "piano",
+        }
+    )
+
+    data = response.json()
+
+    assert response.status_code == 404
+    assert data == {"detail": "Student not found"}

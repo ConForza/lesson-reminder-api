@@ -110,6 +110,8 @@ sentry-sdk==2.53.0
     # via fastapi-cloud-cli
 shellingham==1.5.4
     # via typer
+sqlalchemy==2.0.48
+    # via -r requirements.in
 starlette==0.52.1
     # via fastapi
 typer==0.24.1
@@ -123,6 +125,7 @@ typing-extensions==4.15.0
     #   pydantic-core
     #   pydantic-extra-types
     #   rich-toolkit
+    #   sqlalchemy
     #   typing-inspection
 typing-inspection==0.4.2
     # via

@@ -1,12 +1,14 @@
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
-
 from app.api.v1.health import health_router
 from app.api.v1.invoice import invoice_router
 from app.api.v1.students import students_router
 from app.core.exceptions import DomainError
 from app.core.config import get_settings, Settings
+from app.db.database import Base, engine
 from fastapi import Depends
+
+Base.metadata.create_all(bind=engine)
 
 settings = get_settings()
 

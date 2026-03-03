@@ -20,3 +20,8 @@ class CreateStudentRequest(BaseModel):
     first_name: str
     surname: str
     instrument: str
+
+class UpdateStudentRequest(BaseModel):
+    first_name: str
+    surname: str
+    instrument: str
