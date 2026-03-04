@@ -74,23 +74,6 @@ class SqlAlchemyStudentRepository(StudentRepository):
 
     def __init__(self, db: Session):
         self.db = db
-        self._ensure_seed_data()
-
-    def _ensure_seed_data(self) -> None:
-        existing = (
-            self.db.query(StudentDB)
-            .filter(StudentDB.student_email == "joe@bloggs.com")
-            .first()
-        )
-        if existing is None:
-            joe = StudentDB(
-                student_email="joe@bloggs.com",
-                first_name="Joe",
-                surname="Bloggs",
-                instrument="piano",
-            )
-            self.db.add(joe)
-            self.db.commit()
 
     def get_student_by_email(self, email: str) -> Student | None:
         row = (

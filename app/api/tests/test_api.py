@@ -1,17 +1,11 @@
-from fastapi.testclient import TestClient
-from app.main import app
-
-client = TestClient(app)
-
-
-def test_health():
+def test_health(client):
     response = client.get("/api/v1/health")
 
     assert response.status_code == 200
     assert response.json() == {"status": "ok"}
 
 
-def test_invoice_preview():
+def test_invoice_preview(client):
     response = client.post("/api/v1/invoices/preview", json=
     {
         "staff_id": 1,
@@ -30,7 +24,7 @@ def test_invoice_preview():
     assert len(data["lessons"]) > 1
 
 
-def test_invalid_staff_id_in_invoice_preview():
+def test_invalid_staff_id_in_invoice_preview(client):
     response = client.post("/api/v1/invoices/preview", json=
     {
         "staff_id": 0,
@@ -47,7 +41,7 @@ def test_invalid_staff_id_in_invoice_preview():
     assert data["detail"][0]["msg"] == "Input should be greater than 0"
 
 
-def test_blank_date_from_in_invoice_preview():
+def test_blank_date_from_in_invoice_preview(client):
     response = client.post("/api/v1/invoices/preview", json=
     {
         "staff_id": 1,
@@ -63,7 +57,7 @@ def test_blank_date_from_in_invoice_preview():
     assert data["detail"][0]["msg"] == "Input should be a valid date or datetime, input is too short"
 
 
-def test_blank_date_to_in_invoice_preview():
+def test_blank_date_to_in_invoice_preview(client):
     response = client.post("/api/v1/invoices/preview", json=
     {
         "staff_id": 1,
@@ -79,7 +73,7 @@ def test_blank_date_to_in_invoice_preview():
     assert data["detail"][0]["msg"] == "Input should be a valid date or datetime, input is too short"
 
 
-def test_date_from_greater_than_date_to():
+def test_date_from_greater_than_date_to(client):
     response = client.post("/api/v1/invoices/preview", json=
     {
         "staff_id": 1,
@@ -95,7 +89,7 @@ def test_date_from_greater_than_date_to():
     assert data == {"detail": "date_to must not be before date_from"}
 
 
-def test_students_remaining_lessons_blank_email():
+def test_students_remaining_lessons_blank_email(client):
     response = client.post("/api/v1/students/remaining-lessons", json=
     {
         "student_email": "",
@@ -109,7 +103,7 @@ def test_students_remaining_lessons_blank_email():
     assert data == {"detail": "student_email must not be left blank"}
 
 
-def test_students_remaining_lessons_invalid_instrument():
+def test_students_remaining_lessons_invalid_instrument(client):
     response = client.post("/api/v1/students/remaining-lessons", json=
     {
         "student_email": "joe@bloggs.com",
@@ -123,7 +117,7 @@ def test_students_remaining_lessons_invalid_instrument():
     assert data == {"detail": "Instrument is not supported"}
 
 
-def test_students_remaining_lessons():
+def test_students_remaining_lessons(client):
     response = client.post(
         "/api/v1/students/remaining-lessons",
         json=
@@ -140,7 +134,7 @@ def test_students_remaining_lessons():
     assert data["lessons_60"] == 1
 
 
-def test_get_remaining_lessons():
+def test_get_remaining_lessons(client):
     response = client.get("/api/v1/students/joe@bloggs.com/remaining-lessons?instrument=piano")
 
     data = response.json()
@@ -152,7 +146,7 @@ def test_get_remaining_lessons():
     assert data["instrument"] == "piano"
 
 
-def test_get_remaining_lessons_blank_email():
+def test_get_remaining_lessons_blank_email(client):
     response = client.get("/api/v1/students/%20/remaining-lessons?instrument=piano")
 
     data = response.json()
@@ -161,7 +155,7 @@ def test_get_remaining_lessons_blank_email():
     assert data == {"detail": "student_email must not be left blank"}
 
 
-def test_get_remaining_lessons_invalid_instrument():
+def test_get_remaining_lessons_invalid_instrument(client):
     response = client.get("/api/v1/students/joe@bloggs.com/remaining-lessons?instrument=trumpet")
 
     data = response.json()
@@ -170,7 +164,7 @@ def test_get_remaining_lessons_invalid_instrument():
     assert data == {"detail": "Instrument is not supported"}
 
 
-def test_get_student():
+def test_get_student(client):
     response = client.get("/api/v1/students/joe@bloggs.com")
 
     data = response.json()
@@ -181,7 +175,7 @@ def test_get_student():
     assert data["instrument"] == "piano"
 
 
-def test_get_student_with_blank_email():
+def test_get_student_with_blank_email(client):
     response = client.get("/api/v1/students/%20")
 
     data = response.json()
@@ -190,7 +184,7 @@ def test_get_student_with_blank_email():
     assert data == {"detail": "student_email must not be left blank"}
 
 
-def test_get_student_with_unknown_email():
+def test_get_student_with_unknown_email(client):
     response = client.get("/api/v1/students/unknown@person.com")
 
     data = response.json()
@@ -199,7 +193,7 @@ def test_get_student_with_unknown_email():
     assert data == {"detail": "Student not found"}
 
 
-def test_create_student():
+def test_create_student(client):
     response = client.post(
         "/api/v1/students",
         json={
@@ -218,7 +212,7 @@ def test_create_student():
     assert data["surname"] == "Student"
     assert data["instrument"] == "piano"
 
-def test_create_student_with_duplicate_email():
+def test_create_student_with_duplicate_email(client):
     response = client.post(
         "/api/v1/students",
         json={
@@ -234,7 +228,7 @@ def test_create_student_with_duplicate_email():
     assert response.status_code == 400
     assert data["detail"] == "Student already exists"
 
-def test_create_student_and_fetch_all_students():
+def test_create_student_and_fetch_all_students(client):
     client.post(
         "/api/v1/students",
         json={
@@ -264,7 +258,7 @@ def test_create_student_and_fetch_all_students():
         }
     ]
 
-def test_delete_student():
+def test_delete_student(client):
     client.post(
         "api/v1/students",
         json={
@@ -281,7 +275,7 @@ def test_delete_student():
     assert response.status_code == 200
     assert data == {"detail": "Student deleted successfully"}
 
-def test_delete_non_existent_student():
+def test_delete_non_existent_student(client):
     response = client.delete("/api/v1/students/unknown@test.com")
 
     data = response.json()
@@ -289,7 +283,7 @@ def test_delete_non_existent_student():
     assert response.status_code == 404
     assert data == {"detail": "Student not found"}
 
-def test_update_student():
+def test_update_student(client):
     response = client.put(
         "/api/v1/students/joe@bloggs.com",
         json={
@@ -307,7 +301,7 @@ def test_update_student():
     assert data["surname"] == "Bloggs"
     assert data["instrument"] == "piano"
 
-def test_update_student_blank_email():
+def test_update_student_blank_email(client):
     response = client.put(
         "/api/v1/students/%20",
         json={
@@ -322,7 +316,7 @@ def test_update_student_blank_email():
     assert response.status_code == 400
     assert data == {"detail": "student_email must not be left blank"}
 
-def test_update_non_existent_student():
+def test_update_non_existent_student(client):
     response = client.put(
         "/api/v1/students/doesnotexist@test.com",
         json={

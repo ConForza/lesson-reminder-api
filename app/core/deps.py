@@ -3,7 +3,7 @@ from fastapi import Depends
 from sqlalchemy.orm import Session
 from app.db.database import SessionLocal
 from app.repositories.lesson_repository import LessonRepository, InMemoryLessonRepository
-from app.repositories.student_repository import StudentRepository, InMemoryStudentRepository, SqlAlchemyStudentRepository
+from app.repositories.student_repository import StudentRepository, SqlAlchemyStudentRepository
 from app.services.invoice_preview_service import InvoicePreviewService
 from app.services.student_service import StudentService
 
