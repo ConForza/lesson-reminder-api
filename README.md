@@ -89,3 +89,15 @@ The application follows a layered architecture:
 	•	StudentService uses a pluggable LessonRepository (currently an in-memory implementation) to prepare student lesson summaries.
 
 This separation ensures that business logic remains independent of the HTTP layer and allows external integrations (such as scheduling providers) to be swapped without affecting core domain logic.
+
+API Layer:
+FastAPI routes
+
+Service Layer:
+Business logic
+
+Repository Layer:
+Database access
+
+Database:
+SQLAlchemy models

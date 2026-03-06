@@ -11,7 +11,7 @@ class StudentService:
         self.lesson_repo = lesson_repo
         self.student_repo = student_repo
 
-    def construct_student_response(self, student: Student) -> StudentResponse:
+    def construct_student_response(self, student) -> StudentResponse:
         return StudentResponse(
             student_email=student.student_email,
             first_name=student.first_name,
@@ -54,12 +54,7 @@ class StudentService:
         if self.student_repo.get_student_by_email(body.student_email) is not None:
             raise DomainError("Student already exists", status_code=400)
         else:
-            student = StudentResponse(
-                student_email=body.student_email,
-                first_name=body.first_name,
-                surname=body.surname,
-                instrument=body.instrument,
-            )
+            student = self.construct_student_response(body)
 
             self.student_repo.create_student(student)
             return student

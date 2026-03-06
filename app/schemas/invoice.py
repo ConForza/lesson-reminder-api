@@ -8,6 +8,16 @@ class InvoicePreviewRequest(BaseModel):
     date_to: date = Field(examples=["2026-03-29"])
     preview: bool = Field(default=True, examples=[True])
 
+    class ConfigDict:
+        json_schema_extra = {
+            "example": {
+                "staff_id": 1,
+                "date_from": "2026-02-28",
+                "date_to": "2026-03-29",
+                "preview": True,
+            }
+        }
+
 class LessonPreview(BaseModel):
     name: str
     duration: int

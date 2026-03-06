@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends
+from fastapi.params import Query
 
 from app.core.deps import get_student_service
 from app.schemas.student import StudentRequest, StudentResponse, CreateStudentRequest, UpdateStudentRequest
@@ -32,12 +33,13 @@ async def get_student_record(
     description="Fetches a list of all student's records"
 )
 async def get_all_students(
-        instrument: str | None = None, service: StudentService = Depends(get_student_service)) -> list[StudentResponse]:
+        instrument: str | None = Query(None), service: StudentService = Depends(get_student_service)) -> list[StudentResponse]:
     return service.list_students(instrument)
 
 @students_router.post(
     "/students",
     response_model=StudentResponse,
+    status_code=201,
     summary="Create a new student record",
     description="Creates and stores a new student record."
 )
@@ -79,6 +81,7 @@ async def get_remaining_lessons(student_email: str, instrument: str,
 
 @students_router.delete(
     "/students/{student_email}",
+    status_code=204,
     summary="Delete a student record",
     description="Deletes a student by email."
 )
@@ -87,7 +90,6 @@ async def delete_student(
     service: StudentService = Depends(get_student_service)
 ):
     service.delete_student(StudentRequest(student_email=student_email))
-    return {"detail": "Student deleted successfully"}
 
 @students_router.put(
     "/students/{student_email}",

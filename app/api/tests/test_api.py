@@ -206,7 +206,7 @@ def test_create_student(client):
 
     data = response.json()
 
-    assert response.status_code == 200
+    assert response.status_code == 201
     assert data["student_email"] == "another@student.com"
     assert data["first_name"] == "Another"
     assert data["surname"] == "Student"
@@ -277,10 +277,8 @@ def test_delete_student(client):
     )
 
     response = client.delete("/api/v1/students/delete@test.com")
-    data = response.json()
 
-    assert response.status_code == 200
-    assert data == {"detail": "Student deleted successfully"}
+    assert response.status_code == 204
 
 def test_delete_non_existent_student(client):
     response = client.delete("/api/v1/students/unknown@test.com")
