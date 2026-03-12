@@ -8,7 +8,7 @@ from app.schemas.auth import User
 from app.services.student_service import StudentService
 from app.schemas.remaining_lessons import RemainingLessonsResponse, RemainingLessonsRequest
 
-students_router = APIRouter(tags=["students"])
+students_router = APIRouter(tags=["students"], dependencies=[Depends(get_current_user)])
 
 
 @students_router.get(
@@ -19,8 +19,8 @@ students_router = APIRouter(tags=["students"])
                 "Student email must not be left blank."
 )
 async def get_student_record(
-        student_email: str,
-        service: StudentService = Depends(get_student_service)
+    student_email: str,
+    service: StudentService = Depends(get_student_service)
 ) -> StudentResponse:
     return service.get_student(
         StudentRequest(
@@ -36,8 +36,7 @@ async def get_student_record(
 )
 async def get_all_students(
     instrument: str | None = Query(None),
-    service: StudentService = Depends(get_student_service),
-    current_user: User = Depends(get_current_user)
+    service: StudentService = Depends(get_student_service)
 ) -> list[StudentResponse]:
     return service.list_students(instrument)
 
@@ -49,8 +48,8 @@ async def get_all_students(
     description="Creates and stores a new student record."
 )
 async def create_student(
-        body: CreateStudentRequest,
-        service: StudentService = Depends(get_student_service)
+    body: CreateStudentRequest,
+    service: StudentService = Depends(get_student_service)
 ) -> StudentResponse:
     return service.create_student(body)
 
@@ -62,8 +61,8 @@ async def create_student(
                 "Currently supports piano only. student_email must not be left blank."
 )
 async def remaining_lessons(
-        body: RemainingLessonsRequest,
-        service: StudentService = Depends(get_student_service)
+    body: RemainingLessonsRequest,
+    service: StudentService = Depends(get_student_service)
 ) -> RemainingLessonsResponse:
     return service.get_remaining_lessons(body)
 
@@ -75,8 +74,10 @@ async def remaining_lessons(
     description = "Returns the number of lessons for a student using path and query parameters. "
               "Currently supports piano only. student_email must not be left blank."
 )
-async def get_remaining_lessons(student_email: str, instrument: str,
-                                service: StudentService = Depends(get_student_service)) -> RemainingLessonsResponse:
+async def get_remaining_lessons(
+    student_email: str, instrument: str,
+    service: StudentService = Depends(get_student_service)
+) -> RemainingLessonsResponse:
     return service.get_remaining_lessons(
         RemainingLessonsRequest(
             student_email=student_email,
@@ -103,8 +104,8 @@ async def delete_student(
     description="Updates an existing student's first name, surname, and instrument."
 )
 async def update_student(
-        student_email: str,
-        body: UpdateStudentRequest,
-        service: StudentService = Depends(get_student_service),
+    student_email: str,
+    body: UpdateStudentRequest,
+    service: StudentService = Depends(get_student_service)
 ) -> StudentResponse:
     return service.update_student(student_email, body)

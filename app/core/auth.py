@@ -30,4 +30,7 @@ def get_current_user(
     if user is None:
         raise DomainError("User not found", status_code=401)
 
+    if not user.is_active:
+        raise DomainError("Inactive user", status_code=403)
+
     return user
