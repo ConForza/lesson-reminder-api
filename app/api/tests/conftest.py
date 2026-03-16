@@ -1,4 +1,5 @@
 import pytest
+from datetime import datetime
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -7,7 +8,7 @@ from sqlalchemy.pool import StaticPool
 from app.main import app
 import app.core.deps as deps
 from app.db.database import Base
-from app.db.models import StudentDB
+from app.db.models import StudentDB, LessonDB
 
 TEST_DB_URL = "sqlite+pysqlite:///:memory:"
 
@@ -48,6 +49,38 @@ def setup_database():
                 first_name="Some",
                 surname="Person",
                 instrument="violin",
+            )
+        )
+        db.add(
+            LessonDB(
+                student_email="joe@bloggs.com",
+                instrument="piano",
+                datetime=datetime(2026, 1, 6, 12, 30),
+                duration=30,
+            )
+        )
+        db.add(
+            LessonDB(
+                student_email="joe@bloggs.com",
+                instrument="piano",
+                datetime=datetime(2026, 1, 15, 17, 0),
+                duration=60,
+            )
+        )
+        db.add(
+            LessonDB(
+                student_email="joe@bloggs.com",
+                instrument="piano",
+                datetime=datetime(2026, 1, 28, 19, 30),
+                duration=30,
+            )
+        )
+        db.add(
+            LessonDB(
+                student_email="some@person.com",
+                instrument="violin",
+                datetime=datetime(2026, 2, 23, 18, 30),
+                duration=30,
             )
         )
         db.commit()

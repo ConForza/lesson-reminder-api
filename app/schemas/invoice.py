@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 from typing import List
 from datetime import date
 
@@ -8,7 +8,7 @@ class InvoicePreviewRequest(BaseModel):
     date_to: date = Field(examples=["2026-03-29"])
     preview: bool = Field(default=True, examples=[True])
 
-    class ConfigDict:
+    model_config = ConfigDict(
         json_schema_extra = {
             "example": {
                 "staff_id": 1,
@@ -17,6 +17,7 @@ class InvoicePreviewRequest(BaseModel):
                 "preview": True,
             }
         }
+    )
 
 class LessonPreview(BaseModel):
     name: str

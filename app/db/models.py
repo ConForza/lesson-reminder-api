@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Boolean
+from sqlalchemy import Column, Integer, String, Boolean, DATETIME
 from app.db.database import Base
 
 class StudentDB(Base):
@@ -16,6 +16,7 @@ class LessonDB(Base):
     id = Column(Integer, primary_key=True, index=True)
     student_email = Column(String, index=True, nullable=False)
     instrument = Column(String, nullable=False)
+    datetime = Column(DATETIME, nullable=False)
     duration = Column(Integer, nullable=False)
 
 class UserDB(Base):

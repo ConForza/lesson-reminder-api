@@ -4,6 +4,7 @@ from fastapi.responses import JSONResponse
 from app.api.v1.auth import auth_router
 from app.api.v1.health import health_router
 from app.api.v1.invoice import invoice_router
+from app.api.v1.lessons import lessons_router
 from app.api.v1.students import students_router
 from app.core.exceptions import DomainError
 from app.core.config import get_settings, Settings
@@ -20,7 +21,9 @@ tags_metadata = [
     {"name": "students",
      "description": "Endpoints related to student lesson tracking and calculations."},
     {"name": "invoices",
-     "description": "Endpoints for invoice preview and generation logic."}
+     "description": "Endpoints for invoice preview and generation logic."},
+    {"name": "lessons",
+     "description": "Endpoints related to creating and fetching lessons."}
 ]
 
 app = FastAPI(
@@ -33,6 +36,8 @@ app.include_router(health_router, prefix=settings.api_v1_prefix)
 app.include_router(invoice_router, prefix=settings.api_v1_prefix)
 app.include_router(students_router, prefix=settings.api_v1_prefix)
 app.include_router(auth_router, prefix=settings.api_v1_prefix)
+
+app.include_router(lessons_router, prefix=settings.api_v1_prefix)
 
 @app.get("/")
 async def root(settings: Settings = Depends(get_settings)):

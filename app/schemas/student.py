@@ -1,14 +1,16 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, ConfigDict
+
 
 class StudentRequest(BaseModel):
     student_email: str
 
-    class ConfigDict:
+    model_config = ConfigDict(
         json_schema_extra = {
             "example": {
                 "student_email": "student@example.com",
             }
         }
+    )
 
 class StudentResponse(BaseModel):
     student_email: EmailStr
@@ -28,7 +30,7 @@ class CreateStudentRequest(BaseModel):
     surname: str
     instrument: str
 
-    class ConfigDict:
+    model_config = ConfigDict(
         json_schema_extra = {
             "example": {
                 "student_email": "student@example.com",
@@ -37,13 +39,14 @@ class CreateStudentRequest(BaseModel):
                 "instrument": "piano",
             }
         }
+    )
 
 class UpdateStudentRequest(BaseModel):
     first_name: str
     surname: str
     instrument: str
 
-    class ConfigDict:
+    model_config = ConfigDict(
         json_schema_extra = {
             "example": {
                 "first_name": "Joe",
@@ -51,3 +54,4 @@ class UpdateStudentRequest(BaseModel):
                 "instrument": "piano",
             }
         }
+    )

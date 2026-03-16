@@ -1,4 +1,5 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict
+
 
 class Lesson(BaseModel):
     student_email: str
@@ -8,13 +9,14 @@ class RemainingLessonsRequest(BaseModel):
     student_email: str
     instrument: str
 
-    class ConfigDict:
+    model_config = ConfigDict(
         json_schema_extra = {
             "example": {
                 "student_email": "student@example.com",
                 "instrument": "piano",
             }
         }
+    )
 
 class RemainingLessonsResponse(BaseModel):
     student_email: str
