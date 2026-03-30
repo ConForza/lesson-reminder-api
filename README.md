@@ -4,6 +4,8 @@ A FastAPI backend for managing student lesson tracking and invoice preview logic
 
 This project implements a layered architecture, domain-driven validation, dependency injection, and API-level testing using FastAPI and Pytest.
 
+![CI](https://github.com/ConForza/lesson-reminder-api/actions/workflows/ci.yml/badge.svg)
+
 ---
 
 ## Tech Stack
