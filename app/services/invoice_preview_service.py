@@ -1,4 +1,5 @@
 from typing import List
+from datetime import datetime
 
 from app.core.exceptions import DomainError
 from app.schemas.invoice import LessonPreview, InvoicePreviewRequest, InvoicePreviewResponse
@@ -7,8 +8,8 @@ class InvoicePreviewService:
 
     def preview_invoice(self, body: InvoicePreviewRequest) -> InvoicePreviewResponse:
         try:
-            date_from = body.date_from
-            date_to = body.date_to
+            date_from = datetime.strptime(body.date_from, "%d-%m-%y")
+            date_to = datetime.strptime(body.date_to, "%d-%m-%y")
         except ValueError:
             raise DomainError("Dates must be in the format DD-MM-YY")
 

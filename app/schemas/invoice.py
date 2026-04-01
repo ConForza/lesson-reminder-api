@@ -4,8 +4,8 @@ from datetime import date
 
 class InvoicePreviewRequest(BaseModel):
     staff_id: int = Field(gt=0, examples=[1])
-    date_from: date = Field(examples=["2026-02-28"])
-    date_to: date = Field(examples=["2026-03-29"])
+    date_from: str = Field(examples=["2026-02-28"])
+    date_to: str = Field(examples=["2026-03-29"])
     preview: bool = Field(default=True, examples=[True])
 
     model_config = ConfigDict(

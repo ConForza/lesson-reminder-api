@@ -19,8 +19,8 @@ def get_auth_token(client):
 
 def invoice_preview_payload(
     staff_id=1,
-    date_from="2025-02-26",
-    date_to="2026-02-26",
+    date_from="26-02-25",
+    date_to="26-02-26",
     preview=True,
 ):
     return {
@@ -65,6 +65,14 @@ def lesson_payload(
         "duration": duration,
     }
 
+def test_root_returns_api_title(client):
+    response = client.get("/")
+    data = response.json()
+
+    assert data["message"] == "Lesson Reminder API"
+    assert data["environment"] == "local"
+    assert data["version"] == "0.1.0"
+
 def test_health(client):
     response = client.get("/api/v1/health")
 
@@ -106,8 +114,8 @@ def test_invoice_preview_blank_date_from(client):
 
     data = response.json()
 
-    assert response.status_code == 422
-    assert data["detail"][0]["msg"] == "Input should be a valid date or datetime, input is too short"
+    assert response.status_code == 400
+    assert data["detail"] == "Dates must be in the format DD-MM-YY"
 
 
 def test_invoice_preview_blank_date_to(client):
@@ -118,13 +126,13 @@ def test_invoice_preview_blank_date_to(client):
 
     data = response.json()
 
-    assert response.status_code == 422
-    assert data["detail"][0]["msg"] == "Input should be a valid date or datetime, input is too short"
+    assert response.status_code == 400
+    assert data["detail"] == "Dates must be in the format DD-MM-YY"
 
 
 def test_invoice_preview_date_from_greater_than_date_to(client):
     token = get_auth_token(client)
-    response = client.post("/api/v1/invoices/preview", json=invoice_preview_payload(date_from="2026-02-26", date_to="2026-02-25"),
+    response = client.post("/api/v1/invoices/preview", json=invoice_preview_payload(date_from="26-02-26", date_to="25-02-25"),
                            headers={"Authorization": f"Bearer {token}"}
                            )
 
@@ -132,6 +140,18 @@ def test_invoice_preview_date_from_greater_than_date_to(client):
 
     assert response.status_code == 400
     assert data == {"detail": "date_to must not be before date_from"}
+
+def test_invoice_preview_invalid_date_from_format(client):
+    token = get_auth_token(client)
+    response = client.post("/api/v1/invoices/preview",
+                           json=invoice_preview_payload(date_from="01-25-25", date_to="16-02-26"),
+                           headers={"Authorization": f"Bearer {token}"}
+                           )
+
+    data = response.json()
+
+    assert response.status_code == 400
+    assert data == {"detail": "Dates must be in the format DD-MM-YY"}
 
 
 def test_students_remaining_lessons_blank_email(client):
@@ -480,6 +500,15 @@ def test_login_success(client):
     assert "access_token" in data
     assert data["token_type"] == "bearer"
 
+def test_login_user_not_found(client):
+    login = client.post(
+        "/api/v1/auth/login",
+        data={"username": "test@test.com", "password": "password123"}
+    )
+    data = login.json()
+
+    assert login.status_code == 401
+    assert data["detail"] == "Invalid email entered"
 
 def test_login_wrong_password(client):
     client.post(

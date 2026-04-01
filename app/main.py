@@ -81,7 +81,7 @@ async def log_requests(request: Request, call_next):
 @app.get("/")
 async def root(settings: Settings = Depends(get_settings)):
     return {
-        "message": "Hello World",
+        "message": "Lesson Reminder API",
         "environment": settings.environment,
         "version": settings.version,
     }
