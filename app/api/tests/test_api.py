@@ -70,7 +70,7 @@ def test_root_returns_api_title(client):
     data = response.json()
 
     assert data["message"] == "Lesson Reminder API"
-    assert data["environment"] == "local"
+    assert data["environment"] == "development"
     assert data["version"] == "0.1.0"
 
 def test_health(client):
