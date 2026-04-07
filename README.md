@@ -66,6 +66,24 @@ The test suite includes:
 
 ---
 
+## Running with Docker
+
+Build the image:
+
+```bash
+docker build -t lesson-reminder-api .
+```
+
+Run the container:
+
+```bash
+docker run -p 8000:8000 \
+-e JWT_SECRET_KEY=your-secret-key \
+lesson-reminder-api
+```
+
+---
+
 ## API Endpoints
 
 System
