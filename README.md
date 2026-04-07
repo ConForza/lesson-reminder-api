@@ -1,10 +1,20 @@
 # Lesson Reminder API
 
-A FastAPI backend for managing student lesson tracking and invoice preview logic for a music school.
+A production-ready backend service designed to manage lesson scheduling, student tracking, and invoice generation for a music school.
 
 This project implements a layered architecture, domain-driven validation, dependency injection, and API-level testing using FastAPI and Pytest.
 
 ![CI](https://github.com/ConForza/lesson-reminder-api/actions/workflows/ci.yml/badge.svg)
+
+---
+
+## Live API
+
+Base URL:
+https://lesson-reminder-api.onrender.com
+
+Interactive docs:
+https://lesson-reminder-api.onrender.com/docs
 
 ---
 
@@ -32,6 +42,16 @@ This project implements a layered architecture, domain-driven validation, depend
 
 ---
 
+## Key Design Decisions
+
+- **Layered architecture** to separate HTTP concerns from business logic
+- **Repository pattern** to allow swapping persistence layers (in-memory vs SQLAlchemy)
+- **Domain-level validation** handled in the service layer rather than controllers
+- **Centralised error handling** for consistent API responses
+- **JWT-based authentication** with dependency-injected user context
+
+---
+
 ## Project Structure
 
 - `app/api/v1/` – FastAPI routers
@@ -43,7 +63,7 @@ This project implements a layered architecture, domain-driven validation, depend
 
 ---
 
-## Running the Application
+## Local Development
 
 Create and activate a virtual environment, then install dependencies:
 
@@ -86,12 +106,10 @@ lesson-reminder-api
 
 ## API Endpoints
 
-System
+### System
 - GET /api/v1/health
 
----
-
-Students 
+### Students 
 - POST /api/v1/students
 - POST /api/v1/students/remaining-lessons
 - GET /api/v1/students/remaining-lessons
@@ -100,16 +118,12 @@ Students
 - PUT /api/v1/students/{student_email}
 - DELETE /api/v1/students/{student_email}
 
----
-
-Invoices
+### Invoices
 - POST /api/v1/invoices/preview
 
 Dates for invoice preview are expected in DD-MM-YY format.
 
----
-
-Lessons
+### Lessons
 - POST /api/v1/lessons
 - GET /api/v1/lessons
 - GET /api/v1/lessons/{lesson_id}
@@ -119,9 +133,7 @@ Lessons are created using dates in DD-MM-YY HH:MM format.
 Lessons are fetched using a range of dates in DD-MM-YY format.
 Lesson duration must be 30 or 60.
 
----
-
-Auth
+### Auth
 - POST /api/v1/auth/register
 - POST /api/v1/auth/login
 - GET /api/v1/auth/me
@@ -164,14 +176,53 @@ Application logs are written to `app.log`.
 The application requires the following environment variables:
 
 - `JWT_SECRET_KEY` – secret used to sign JWT tokens
+- `ACCESS_TOKEN_EXPIRE_MINUTES` - defaults to 30
+- `ENVIRONMENT` - defaults to 'development'
+- `APP_NAME` - defaults to 'Lesson Reminder API' 
+- `API_V1_PREFIX` - defaults to '/api/v1'
+- `VERSION` - defaults to '0.1.0'
 
-You can define these in a `.env` file for local development.
+You can define these in a `.env` file for local development. Refer to `.env.example` for a template.
 
 ---
 
 ## API Documentation
 
-Interactive API docs are available at:
+Interactive API docs are available locally at:
 
 - http://localhost:8000/docs
 - http://localhost:8000/redoc
+
+---
+
+## Deployment
+
+The application is deployed on Render using Docker.
+
+### Key details
+
+- Containerised using Docker
+- Environment variables configured via Render dashboard
+- Automatic deploys on push via GitHub integration
+
+### Required environment variables
+
+- JWT_SECRET_KEY
+- ACCESS_TOKEN_EXPIRE_MINUTES
+- ENVIRONMENT
+- APP_NAME
+- API_V1_PREFIX
+- VERSION
+
+This project is designed to be deployment-ready, with environment-based configuration and containerised infrastructure.
+
+---
+
+## Future Improvements
+
+- Add background job processing (e.g. Celery) for scheduled reminders
+- Introduce PostgreSQL for production persistence
+- Add rate limiting and request throttling
+- Implement role-based access control (RBAC)
+- Add caching layer (Redis) for frequently accessed data
+- Expand test coverage to include repository layer
